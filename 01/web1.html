@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>설문조사 모음 | Survey Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: #f6f8fa;
+      color: #1f2328;
+    }
+    .gh-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border-color: #d0d7de;
+    }
+    .gh-card:hover {
+      border-color: #0969da;
+      box-shadow: 0 4px 14px rgba(140, 149, 159, 0.2);
+      transform: translateY(-2px);
+    }
+    .gh-nav-tab.active {
+      font-weight: 600;
+      color: #1f2328;
+      border-bottom: 2px solid #fd8c73;
+    }
+    /* Toast animation */
+    @keyframes slideUp {
+      from { transform: translate(-50%, 20px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .toast-anim {
+      animation: slideUp 0.25s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- GitHub Global Header -->
+  <header class="bg-[#24292f] text-white px-4 py-3 sm:px-8 border-b border-gray-700 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 홈 바로가기 버튼 (../index.html 이동) -->
+        <a href="../index.html" 
+           title="홈 메인으로 이동" 
+           class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#2ea44f] hover:bg-[#2c974b] text-white font-medium text-xs sm:text-sm rounded-md shadow-sm transition-all duration-150 border border-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none">
+          <i class="fa-solid fa-house text-xs"></i>
+          <span class="font-semibold">홈으로</span>
+        </a>
+
+        <span class="text-gray-600 hidden sm:inline">|</span>
+
+        <!-- GitHub 로고 및 리포지토리 식별자 -->
+        <a href="../index.html" class="text-white hover:text-gray-300 transition-colors flex items-center gap-2">
+          <i class="fa-brands fa-github text-2xl sm:text-3xl"></i>
+          <span class="font-bold text-lg tracking-tight hidden md:inline">SurveyHub</span>
+        </a>
+        <span class="text-gray-500">/</span>
+        <div class="flex items-center gap-2 text-sm font-medium text-gray-200">
+          <a href="../index.html" class="hover:underline text-gray-300">pnumin</a>
+          <span class="text-gray-500">/</span>
+          <a href="https://github.com/pnumin/fnda21" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:underline flex items-center gap-1.5">
+            fnda21-surveys
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400"></i>
+          </a>
+          <span class="border border-gray-500 rounded-full px-2 py-0.5 text-xs text-gray-300 font-normal hidden sm:inline">Public</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 text-xs sm:text-sm">
+        <div class="hidden md:flex items-center bg-gray-800 border border-gray-600 rounded-md overflow-hidden text-gray-200">
+          <button class="px-2.5 py-1 hover:bg-gray-700 flex items-center gap-1.5 transition">
+            <i class="fa-regular fa-eye"></i> Watch <span class="bg-gray-700 px-1.5 py-0.2 rounded-full text-xs">12</span>
+          </button>
+          <div class="w-px h-4 bg-gray-600"></div>
+          <button class="px-2.5 py-1 hover:bg-gray-700 flex items-center gap-1.5 transition">
+            <i class="fa-regular fa-star"></i> Star <span class="bg-gray-700 px-1.5 py-0.2 rounded-full text-xs">48</span>
+          </button>
+        </div>
+        <span class="inline-flex items-center gap-1 bg-green-900/60 text-green-300 border border-green-600/40 rounded-full px-2.5 py-1 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> 진행 중 (5건)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Repo Sub-navigation -->
+  <div class="bg-white border-b border-[#d0d7de] px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto flex items-center gap-6 text-sm text-[#57606a] overflow-x-auto">
+      <a href="../index.html" class="flex items-center gap-1.5 py-3 text-[#57606a] hover:text-[#0969da] transition whitespace-nowrap border-b-2 border-transparent">
+        <i class="fa-solid fa-chevron-left text-xs"></i>
+        <span>메인 홈 (../index.html)</span>
+      </a>
+      <button class="gh-nav-tab active flex items-center gap-2 py-3 border-b-2">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>설문 목록 (Surveys)</span>
+        <span class="bg-[#afb8c1]/20 text-[#24292f] text-xs font-medium px-2 py-0.5 rounded-full" id="surveyCountBadge">5</span>
+      </button>
+      <a href="#guide" class="flex items-center gap-2 py-3 hover:text-[#1f2328] transition whitespace-nowrap">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>참여 안내</span>
+      </a>
+      <a href="#stats" class="flex items-center gap-2 py-3 hover:text-[#1f2328] transition whitespace-nowrap">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>현황 요약</span>
+      </a>
+    </div>
+  </div>
+
+  <main class="flex-grow max-w-6xl mx-auto w-full px-4 sm:px-8 py-8">
+    
+    <!-- Hero / Intro Card -->
+    <div class="bg-white border border-[#d0d7de] rounded-xl p-5 sm:p-6 mb-8 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#0969da] mb-1">
+            <i class="fa-solid fa-bullhorn"></i> Research & Demand Analysis Portal
+          </div>
+          <h1 class="text-xl sm:text-2xl font-bold text-[#1f2328]">
+            사전 수요 조사 및 행태 분석 설문조사 허브
+          </h1>
+          <p class="text-sm text-[#57606a] mt-1.5 leading-relaxed">
+            더 나은 서비스 기획과 브랜드 가치 창출을 위해 소중한 의견을 모으고 있습니다. 카드를 클릭하면 해당 구글 폼 설문지가 <strong>새 창</strong>으로 열립니다.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <div class="bg-[#f6f8fa] border border-[#d0d7de] rounded-lg px-3 py-2 text-xs text-[#57606a] flex items-center gap-2">
+            <i class="fa-solid fa-clock text-[#0969da]"></i>
+            <span>평균 소요 시간: <strong>3~5분</strong></span>
+          </div>
+          <div class="bg-[#f6f8fa] border border-[#d0d7de] rounded-lg px-3 py-2 text-xs text-[#57606a] flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-green-600"></i>
+            <span>익명 보장</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
+      <!-- Search Box -->
+      <div class="relative flex-1 max-w-md">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="설문조사 제목 또는 키워드 검색..."
+          class="w-full pl-9 pr-4 py-2 bg-white border border-[#d0d7de] rounded-md text-sm text-[#1f2328] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0969da] focus:border-transparent transition"
+        />
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs font-medium" id="categoryFilterContainer">
+        <button data-category="all" class="cat-filter-btn active bg-[#0969da] text-white px-3 py-1.5 rounded-full transition shadow-xs">
+          전체 보기 (5)
+        </button>
+        <button data-category="고객" class="cat-filter-btn bg-white border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] px-3 py-1.5 rounded-full transition">
+          고객/수요
+        </button>
+        <button data-category="브랜드" class="cat-filter-btn bg-white border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] px-3 py-1.5 rounded-full transition">
+          브랜드
+        </button>
+        <button data-category="서비스" class="cat-filter-btn bg-white border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] px-3 py-1.5 rounded-full transition">
+          서비스
+        </button>
+        <button data-category="라이프스타일" class="cat-filter-btn bg-white border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] px-3 py-1.5 rounded-full transition">
+          루틴/공간
+        </button>
+      </div>
+    </div>
+
+    <!-- Survey Cards Grid -->
+    <div id="surveyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Cards will be populated dynamically by JavaScript to enable real-time search & filters -->
+    </div>
+
+    <!-- No Results Placeholder -->
+    <div id="noResults" class="hidden text-center py-16 bg-white border border-[#d0d7de] rounded-xl my-4">
+      <i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-3 block"></i>
+      <h3 class="text-base font-semibold text-[#1f2328]">검색 결과가 없습니다</h3>
+      <p class="text-xs text-[#57606a] mt-1">다른 검색어를 입력하시거나 필터를 재설정해 보세요.</p>
+      <button onclick="resetFilters()" class="mt-4 px-3 py-1.5 text-xs bg-[#f6f8fa] border border-[#d0d7de] rounded-md font-medium text-[#0969da] hover:bg-gray-100 transition">
+        필터 초기화
+      </button>
+    </div>
+
+    <!-- Information Section / Guide -->
+    <section id="guide" class="mt-12 bg-white border border-[#d0d7de] rounded-xl p-6 shadow-sm">
+      <div class="flex items-center gap-2 text-[#1f2328] font-bold text-base border-b border-[#d0d7de] pb-3 mb-4">
+        <i class="fa-solid fa-book-open text-[#0969da]"></i>
+        <span>README.md — 설문조사 참여 안내</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-[#57606a]">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0969da] flex items-center justify-center shrink-0 font-bold">1</div>
+          <div>
+            <h4 class="font-semibold text-[#1f2328] mb-1">관심 설문 선택</h4>
+            <p class="text-xs leading-relaxed">각 카드를 클릭하면 구글 폼(Google Forms) 설문지로 새 창에서 즉시 연결됩니다.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0969da] flex items-center justify-center shrink-0 font-bold">2</div>
+          <div>
+            <h4 class="font-semibold text-[#1f2328] mb-1">비밀 보장 및 데이터 활용</h4>
+            <p class="text-xs leading-relaxed">응답 데이터는 통계 분석 및 사업/서비스 개선 연구 목적으로만 안전하게 활용됩니다.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0969da] flex items-center justify-center shrink-0 font-bold">3</div>
+          <div>
+            <h4 class="font-semibold text-[#1f2328] mb-1">링크 공유 지원</h4>
+            <p class="text-xs leading-relaxed">각 카드의 공유 아이콘을 눌러 주변 동료나 지인에게 간편하게 설문 링크를 전달할 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Message Component -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1f2328] text-white px-4 py-2.5 rounded-lg shadow-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 pointer-events-none opacity-0 transition-opacity z-50">
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toastMessage">설문 링크가 클립보드에 복사되었습니다.</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-[#d0d7de] bg-white py-6 px-4 text-xs text-[#57606a]">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <i class="fa-brands fa-github text-gray-400 text-base"></i>
+        <span>© 2026 pnumin. Inspired by GitHub Primer Design System.</span>
+      </div>
+      <div class="flex items-center gap-4 text-gray-500">
+        <span class="hover:underline cursor-pointer">Security</span>
+        <span class="hover:underline cursor-pointer">Privacy</span>
+        <span class="hover:underline cursor-pointer">Docs</span>
+        <span class="hover:underline cursor-pointer">Contact</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Survey Data Definition
+    const surveys = [
+      {
+        id: 1,
+        title: "고객 사전설문조사",
+        tag: "고객",
+        badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
+        icon: "fa-users",
+        description: "고객님의 라이프스타일과 평소 소비 패턴, 선호하는 서비스 특성을 파악하기 위한 사전 기초 조사입니다.",
+        duration: "약 3분 소요",
+        target: "모든 잠재 고객",
+        url: "https://docs.google.com/forms/d/e/1FAIpQLScL9nJ4w3hdCmM5NfPbafvYdJfB_LktYnpIUUY7nB9jzg-BWw/viewform"
+      },
+      {
+        id: 2,
+        title: "브랜드 론칭 사전 수요 조사",
+        tag: "브랜드",
+        badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
+        icon: "fa-rocket",
+        description: "신규 브랜드 론칭에 앞서 브랜드 이미지, 기대 가치 및 초기 구매/경험 의향을 파악하기 위한 조사입니다.",
+        duration: "약 4분 소요",
+        target: "신규 브랜드 관심 고객",
+        url: "https://docs.google.com/forms/d/e/1FAIpQLSewlAIsVkookXbjQRn6myOE_gYBODrFX59GS4__we_8rYRMrQ/viewform"
+      },
+      {
+        id: 3,
+        title: "잠재 고객 수요 파악 설문",
+        tag: "고객",
+        badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        icon: "fa-magnifying-glass-chart",
+        description: "일상에서 겪는 문제점(Pain Point)과 서비스 도입 시 기대되는 효용 및 선호 가격대를 검증합니다.",
+        duration: "약 3~4분 소요",
+        target: "잠재 타깃층",
+        url: "https://docs.google.com/forms/d/e/1FAIpQLScBWuwPGZqPiHdc_kYRER5lAMNWNgcgNDG3Knd81ntVbG7Nqg/viewform"
+      },
+      {
+        id: 4,
+        title: "서비스 사전 수요조사",
+        tag: "서비스",
+        badgeColor: "bg-amber-50 text-amber-800 border-amber-200",
+        icon: "fa-cubes",
+        description: "새롭게 기획 중인 서비스 핵심 기능의 효용성과 이용 의향, 추가 희망 편의 기능을 파악합니다.",
+        duration: "약 3분 소요",
+        target: "서비스 이용 희망자",
+        url: "https://docs.google.com/forms/d/e/1FAIpQLSf6POdOgfqTHXN9gjeWkQSPRjPOc_BPBS9sKduYkfLP90T4Rw/viewform"
+      },
+      {
+        id: 5,
+        title: "출근 전 아침 루틴 및 복합 공간 이용 행태 조사",
+        tag: "라이프스타일",
+        badgeColor: "bg-rose-50 text-rose-700 border-rose-200",
+        icon: "fa-sun",
+        description: "출근 전 모닝 루틴, 시간 활용 방식 및 카페·스터디·문화 복합 공간 이용 패턴을 분석합니다.",
+        duration: "약 5분 소요",
+        target: "직장인 및 대학(원)생",
+        url: "https://docs.google.com/forms/d/e/1FAIpQLScCejJ0_x_gjgYJL-8mLPrVMXJt5o534hPOXcj3XjUbiRuRpw/viewform"
+      }
+    ];
+
+    let currentCategory = 'all';
+    let searchQuery = '';
+
+    // Render Cards Function
+    function renderSurveys() {
+      const grid = document.getElementById('surveyGrid');
+      const noResults = document.getElementById('noResults');
+
+      // Filter
+      const filtered = surveys.filter(s => {
+        const matchesCat = (currentCategory === 'all') || (s.tag === currentCategory);
+        const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              s.tag.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noResults.classList.remove('hidden');
+        return;
+      }
+
+      noResults.classList.add('hidden');
+      grid.innerHTML = filtered.map(survey => `
+        <div class="gh-card bg-white border rounded-xl p-5 flex flex-col justify-between cursor-pointer relative group"
+             onclick="openSurvey('${survey.url}')"
+             role="button"
+             tabindex="0"
+             onkeydown="if(event.key === 'Enter') openSurvey('${survey.url}')">
+          
+          <div>
+            <!-- Card Header: Tag & Quick Actions -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border ${survey.badgeColor}">
+                <i class="fa-solid ${survey.icon} mr-1 text-[11px]"></i>${survey.tag}
+              </span>
+              
+              <div class="flex items-center gap-1.5" onclick="event.stopPropagation();">
+                <button
+                  title="링크 복사"
+                  onclick="copyLink(event, '${survey.url}', '${survey.title}')"
+                  class="w-7 h-7 flex items-center justify-center rounded-md text-gray-400 hover:text-[#0969da] hover:bg-gray-100 transition"
+                  aria-label="링크 복사">
+                  <i class="fa-regular fa-copy text-xs"></i>
+                </button>
+                <a
+                  href="${survey.url}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="새 창에서 열기"
+                  class="w-7 h-7 flex items-center justify-center rounded-md text-gray-400 hover:text-[#0969da] hover:bg-gray-100 transition"
+                  aria-label="새 창으로 이동">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-base font-bold text-[#1f2328] group-hover:text-[#0969da] transition-colors line-clamp-2 leading-snug">
+              ${survey.title}
+            </h3>
+
+            <!-- Description -->
+            <p class="text-xs text-[#57606a] mt-2 leading-relaxed line-clamp-3">
+              ${survey.description}
+            </p>
+          </div>
+
+          <!-- Card Footer Info -->
+          <div class="mt-5 pt-3.5 border-t border-gray-100">
+            <div class="flex items-center justify-between text-xs text-[#57606a] mb-3">
+              <span class="flex items-center gap-1">
+                <i class="fa-regular fa-clock text-gray-400"></i> ${survey.duration}
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-user-check text-gray-400"></i> ${survey.target}
+              </span>
+            </div>
+
+            <!-- Action Button -->
+            <a
+              href="${survey.url}"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="event.stopPropagation();"
+              class="w-full inline-flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold text-white bg-[#0969da] hover:bg-[#085ac1] rounded-md transition shadow-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#0969da]">
+              <span>설문 참여하기</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+
+        </div>
+      `).join('');
+    }
+
+    // Direct Click Card Handler
+    function openSurvey(url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    // Copy Link Helper (fallback safe)
+    function copyLink(event, url, title) {
+      if (event) event.stopPropagation();
+
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      let success = false;
+      try {
+        success = document.execCommand('copy');
+      } catch (err) {
+        success = false;
+      }
+      document.body.removeChild(textarea);
+
+      showToast(success ? `[${title}] 링크가 복사되었습니다.` : '링크 복사에 실패했습니다.');
+    }
+
+    // Custom Toast
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.innerText = message;
+      
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('toast-anim');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+        toast.classList.remove('toast-anim');
+      }, 2500);
+    }
+
+    // Category Filter Buttons Handler
+    document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-filter-btn').forEach(b => {
+          b.classList.remove('bg-[#0969da]', 'text-white', 'shadow-xs');
+          b.classList.add('bg-white', 'border', 'border-[#d0d7de]', 'text-[#57606a]');
+        });
+
+        btn.classList.remove('bg-white', 'border-[#d0d7de]', 'text-[#57606a]');
+        btn.classList.add('bg-[#0969da]', 'text-white', 'shadow-xs');
+
+        currentCategory = btn.getAttribute('data-category');
+        renderSurveys();
+      });
+    });
+
+    // Search Input Handler
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderSurveys();
+    });
+
+    // Reset Filters
+    function resetFilters() {
+      searchQuery = '';
+      currentCategory = 'all';
+      document.getElementById('searchInput').value = '';
+      
+      document.querySelectorAll('.cat-filter-btn').forEach((b, idx) => {
+        if (idx === 0) {
+          b.classList.remove('bg-white', 'border-[#d0d7de]', 'text-[#57606a]');
+          b.classList.add('bg-[#0969da]', 'text-white', 'shadow-xs');
+        } else {
+          b.classList.remove('bg-[#0969da]', 'text-white', 'shadow-xs');
+          b.classList.add('bg-white', 'border', 'border-[#d0d7de]', 'text-[#57606a]');
+        }
+      });
+      renderSurveys();
+    }
+
+    // Initial Render
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSurveys();
+    });
+  </script>
+</body>
+</html>
